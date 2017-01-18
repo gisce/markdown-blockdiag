@@ -32,6 +32,17 @@ class BlockdiagTest(unittest.TestCase):
         ])
         self.assertTrue(BlockdiagProcessor.RE.match(text))
 
+    def test_raise_exception_if_not_configured_dir(self):
+        def raised():
+            text = join_text([
+                "blockdiag {",
+                "    A -> B -> C;",
+                "}"
+            ])
+            markdown(text, extensions=['markdown_blockdiag'])
+
+        self.assertRaises(ValueError, raised)
+
     def test_basic_blockdiag(self):
         text = join_text([
             "blockdiag {",
@@ -46,6 +57,14 @@ class BlockdiagTest(unittest.TestCase):
 
         expected = '<p><img src="{0}" /></p>'.format(filename)
         with patch_mkstemp(patched_mkstemp):
-            result = markdown(text, extensions=['markdown_blockdiag'])
+            result = markdown(
+                text,
+                extensions=['markdown_blockdiag'],
+                extension_configs={
+                    'markdown_blockdiag': {
+                        'dir': '/tmp'
+                    }
+                }
+            )
 
         self.assertEqual(expected, result)
