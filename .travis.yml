@@ -10,3 +10,11 @@ script:
 - coverage run setup.py test
 after_success:
 - coverage report
+deploy:
+  provider: pypi
+  user: gisce
+  password:
+    secure: SrHlBnuvjyOQA5lm/DL3cKdXPoO3V1Rc4brSwAqsSq85hjPkzzbFe4osBYRxTnqo8Ps5e0KN5WaDqYi4GhRakNE932WBAkKqifkjQlqOtfileFrOAAtcU8T9Z1HxeWq5QfDyr2xGhJfpK5zwRrsA9dz2Ap5P4YQrsyD3VFuIKtqdhDf0MsRd/qFmZ3AEKAaIiag9GFLiyoWZZ13Bym89g4OnTdyB4RcYn609c76180VHkVsCX4ztnCbgND8ZEZIBA45P7bHldVMCEx2OD+MWDwysWjKxDcbv66MkRUK3/SjasWg1F/WKJvmjVSb1BrFr4whfe69EFHk54yiQTjNfju4HZGYPo6LEQWYtGHT0liBqDV55YIUrlVZVuR9R/ritCHedZ+caCJIZCou5f16anAEjARwIZaSeZij0A70ddq0cr8RteZXMQ9pR1lqOOKq2R4dJG0PfVAO6UCwpTJFfc/myJSbVGYCfw6AQEiptrtdU+e6dNMM7ON497OEzeGM6PnqLDVprZ3n8FJ2be7dnbwQs3sr+cvrq5Tk/gqUti4RGUJiwDlFy23HaC2wI5/bZp3tfsFyKE90iloSE4AgVFRbXjfpF8JdWWQa8XtaRIHyVFu+UQ3ekNXUH0kb01geAQKnD0aHf/KP9tmcXleqbB2MzferFUKsXdN6taWaSip4=
+  on:
+    tags: true
+    repo: gisce/markdown-blockdiag
