@@ -18,8 +18,6 @@ Install
 Use
 ---
 
-Configure `dir` parameter extension with the path to save the diagrams.
-
 In your markdown text you can define the block
 
 .. code-block::
