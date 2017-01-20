@@ -1,11 +1,14 @@
 # encoding=utf-8
 from __future__ import unicode_literals
+
 import unittest
 import tempfile
 from contextlib import contextmanager
+import shutil
 
 from markdown import markdown
 from markdown_blockdiag.parser import BlockdiagProcessor
+from markdown_blockdiag.utils import random_filename
 
 
 def join_text(lines):
@@ -50,21 +53,22 @@ class BlockdiagTest(unittest.TestCase):
             "}"
         ])
 
-        filename = tempfile.mkstemp()[1]
+        filename = random_filename()
 
         def patched_mkstemp(*args, **kwargs):
             return 1, filename
 
-        expected = '<p><img src="{0}" /></p>'.format(filename)
+        expected = '<p><img src="/diagrams/{0}" /></p>'.format(filename)
         with patch_mkstemp(patched_mkstemp):
             result = markdown(
                 text,
                 extensions=['markdown_blockdiag'],
                 extension_configs={
                     'markdown_blockdiag': {
-                        'dir': '/tmp'
+                        'dir': 'tmp'
                     }
                 }
             )
+            shutil.rmtree('tmp')
 
         self.assertEqual(expected, result)
