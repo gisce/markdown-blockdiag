@@ -1,12 +1,10 @@
 from __future__ import unicode_literals, absolute_import
 import re
-import os
+import base64
 
 from markdown.blockprocessors import BlockProcessor
 from markdown.util import etree
-from markdown_blockdiag.utils import random_filename
-
-from blockdiag import parser, builder, drawer
+from markdown_blockdiag.utils import draw_blockdiag
 
 
 class BlockdiagProcessor(BlockProcessor):
@@ -21,31 +19,12 @@ class BlockdiagProcessor(BlockProcessor):
         return bool(self.RE.match(block))
 
     def run(self, parent, blocks):
-        diagram_dir = self.extension.getConfig('dir')
-        if not diagram_dir:
-            raise ValueError(
-                'No directory is configured for markdown-blockdiag'
-            )
-
-        diagram_dir = os.path.join(
-            diagram_dir,
-            'diagrams'
-        )
-
-        if not os.path.exists(diagram_dir):
-            os.makedirs(diagram_dir)
 
         raw_block = blocks.pop(0)
-        tree = parser.parse_string(raw_block)
-        diagram = builder.ScreenNodeBuilder.build(tree)
-        filename = random_filename()
-        draw_path = os.path.join(
-            diagram_dir,
-            filename
-        )
-        draw = drawer.DiagramDraw('png', diagram, filename=draw_path)
-        draw.draw()
-        draw.save()
+        diagram = draw_blockdiag(raw_block)
+
         p = etree.SubElement(parent, 'p')
         img = etree.SubElement(p, 'img')
-        img.attrib['src'] = '/diagrams/{}'.format(filename)
+        img.attrib['src'] = 'data:image/png;base64,{0}'.format(
+            base64.b64encode(diagram)
+        )
