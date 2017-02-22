@@ -6,7 +6,7 @@ class BlockdiagExtension(Extension):
 
     def __init__(self, **kwargs):
         self.config = {
-            'dir': ['', 'Path to store the diagrams']
+            'fontpath': ['', 'Font path to use']
         }
         super(BlockdiagExtension, self).__init__(**kwargs)
 
