@@ -39,12 +39,7 @@ class BlockdiagTest(unittest.TestCase):
         )
         result = markdown(
             text,
-            extensions=['markdown_blockdiag'],
-            extension_configs={
-                'markdown_blockdiag': {
-                    'dir': 'tmp'
-                }
-            }
+            extensions=['markdown_blockdiag']
         )
 
         self.assertEqual(expected, result)
