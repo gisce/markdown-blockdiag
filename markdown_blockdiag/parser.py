@@ -21,7 +21,8 @@ class BlockdiagProcessor(BlockProcessor):
     def run(self, parent, blocks):
 
         raw_block = blocks.pop(0)
-        diagram = draw_blockdiag(raw_block)
+        font_path = self.extension.getConfig('fontpath')
+        diagram = draw_blockdiag(raw_block, font_path=font_path)
 
         p = etree.SubElement(parent, 'p')
         img = etree.SubElement(p, 'img')
