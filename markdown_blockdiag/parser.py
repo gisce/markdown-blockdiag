@@ -21,7 +21,7 @@ class BlockdiagProcessor(BlockProcessor):
     def run(self, parent, blocks):
         raw_block = blocks.pop(0)
         font_path = self.extension.getConfig('fontpath')
-        output_fmt = self.extension.getConfig('format', 'png')
+        output_fmt = self.extension.getConfig('format')
         diagram = draw_blockdiag(raw_block, output_fmt=output_fmt, font_path=font_path)
         if output_fmt == 'png':
             src_data = 'data:image/png;base64,{0}'.format(

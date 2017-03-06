@@ -7,7 +7,7 @@ class BlockdiagExtension(Extension):
     def __init__(self, **kwargs):
         self.config = {
             'fontpath': ['', 'Font path to use'],
-            'format': ['', 'Format to use (png/svg)'],
+            'format': ['png', 'Format to use (png/svg)'],
         }
         super(BlockdiagExtension, self).__init__(**kwargs)
 
