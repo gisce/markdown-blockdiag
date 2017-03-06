@@ -4,7 +4,7 @@ from blockdiag import parser, builder, drawer
 from blockdiag.utils.fontmap import FontMap
 
 
-def draw_blockdiag(content, filename=None, font_path=None):
+def draw_blockdiag(content, filename=None, font_path=None, output_fmt='png'):
     tree = parser.parse_string(content)
     diagram = builder.ScreenNodeBuilder.build(tree)
 
@@ -14,7 +14,7 @@ def draw_blockdiag(content, filename=None, font_path=None):
         fontmap.set_default_font(font_path)
 
     draw = drawer.DiagramDraw(
-        'png', diagram, filename=filename, antialias=True, fontmap=fontmap
+        output_fmt, diagram, filename=filename, antialias=True, fontmap=fontmap
     )
     draw.draw()
 
