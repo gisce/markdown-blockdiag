@@ -26,3 +26,13 @@ In your markdown text you can define the block
       A -> B -> C -> D;
       A -> E -> F -> G;
   }
+
+
+MkDocs Integration
+------------------
+
+.. code-block::
+
+  markdown_extensions:
+    - markdown_blockdiag:
+        format: svg
