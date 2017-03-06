@@ -37,7 +37,6 @@ class BlockdiagTest(unittest.TestCase):
         result = markdown(
             TEST_DIAG_TXT,
             extensions=['markdown_blockdiag'],
-            # extension_configs={'markdown_blockdiag': {'format': 'png'}}
         )
 
         self.assertEqual(expected, result)
