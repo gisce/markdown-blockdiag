@@ -47,6 +47,21 @@ seqdiag {
 """.strip()
 
 
+MARKDOWN_DOC = r"""
+# Title
+
+paragraph
+
+{diagram}
+
+paragraph
+
+{diagram}
+
+paragraph
+"""
+
+
 class BlockdiagTest(unittest.TestCase):
     """Testing blockdiag extension
     """
@@ -104,3 +119,20 @@ class BlockdiagTest(unittest.TestCase):
             extensions=['markdown_blockdiag'],
         )
         self.assertEqual(expected, result)
+
+    def test_markdown(self):
+        draw = draw_blockdiag(EXTENDED_DIAG_TXT)
+
+        expected = '<p><img src="data:image/png;base64,{0}" /></p>'.format(
+            base64.b64encode(draw)
+        )
+
+        marcdown_doc = MARKDOWN_DOC.format(diagram=EXTENDED_DIAG_TXT)
+        result = markdown(
+            marcdown_doc,
+            extensions=['markdown_blockdiag'],
+        )
+
+        self.assertTrue("Title" in result)
+        self.assertEqual(2, result.count(expected))
+        self.assertEqual(3, result.count("paragraph"))

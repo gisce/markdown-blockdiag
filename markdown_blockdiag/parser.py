@@ -10,6 +10,7 @@ from markdown_blockdiag.utils import draw_blockdiag, DIAG_MODULES
 class BlockdiagProcessor(BlockProcessor):
 
     RE = re.compile(r"""
+        ^
         (?P<diagtype>{})
         \s+
         \{{
@@ -18,21 +19,22 @@ class BlockdiagProcessor(BlockProcessor):
     def __init__(self, parser, extension):
         super(BlockdiagProcessor, self).__init__(parser)
         self.extension = extension
-        self.is_block_closed = True
 
     def test(self, parent, block):
-        is_initial_block = bool(self.RE.match(block))
-        if is_initial_block:
-            self.is_block_closed = False
-
-        if not self.is_block_closed:
-            self.is_block_closed = block.strip().endswith("}")
-
-        return is_initial_block or not self.is_block_closed
+        return bool(self.RE.match(block))
 
     def run(self, parent, blocks):
-        raw_block = "\n".join(blocks)
-        del blocks[:]
+        diag_blocks = []
+
+        for block in blocks:
+            block = block.strip()
+            diag_blocks.append(block)
+            if block.endswith("}"):
+                break
+
+        raw_block = "\n".join(diag_blocks)
+        del blocks[:len(diag_blocks)]
+
         font_path = self.extension.getConfig('fontpath')
         output_fmt = self.extension.getConfig('format')
         diagram = draw_blockdiag(raw_block, output_fmt=output_fmt, font_path=font_path)
