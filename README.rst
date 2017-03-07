@@ -28,8 +28,20 @@ In your markdown text you can define the block
   }
 
 
+Testing
+-------
+
+
+.. code-block::
+
+  $ pip install coverage
+  $ python setup.py test
+
+
 MkDocs Integration
 ------------------
+
+In your mkdocs.yml add this to markdown_extensions.
 
 .. code-block::
 
