@@ -40,7 +40,7 @@ class BlockdiagProcessor(BlockProcessor):
         diagram = draw_blockdiag(raw_block, output_fmt=output_fmt, font_path=font_path)
         if output_fmt == 'png':
             src_data = 'data:image/png;base64,{0}'.format(
-                base64.b64encode(diagram)
+                base64.b64encode(diagram).decode('ascii')
             )
         else:
             src_data = 'data:image/svg+xml;utf8,{0}'.format(diagram)
