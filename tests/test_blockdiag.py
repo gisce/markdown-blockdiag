@@ -96,6 +96,22 @@ class BlockdiagTest(unittest.TestCase):
 
         self.assertEqual(expected, result)
 
+    def test_font_antialias_blockdiag(self):
+        self.maxDiff = None
+        draw = draw_blockdiag(BASIC_DIAG_TXT, font_antialias=False)
+
+        expected = '<p><img src="data:image/png;base64,{0}" /></p>'.format(
+            base64.b64encode(draw)
+        )
+        result = markdown(
+            BASIC_DIAG_TXT,
+            extensions=['markdown_blockdiag'],
+            extension_configs={'markdown_blockdiag': {'fontantialias': False}}
+        )
+        result = unescape(result).replace('&quot;', '\"')
+
+        self.assertEqual(expected, result)
+
     def test_label_blockdiag(self):
         draw = draw_blockdiag(EXTENDED_DIAG_TXT)
 
