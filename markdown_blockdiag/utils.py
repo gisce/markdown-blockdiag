@@ -16,7 +16,7 @@ DIAG_MODULES = {
 }
 
 
-def draw_blockdiag(content, filename=None, font_path=None, output_fmt='png'):
+def draw_blockdiag(content, filename=None, font_path=None, font_antialias=True, output_fmt='png'):
     diag_type, content = content.split(" ", 1)
     parser, builder, drawer = DIAG_MODULES[diag_type.strip()]
     tree = parser.parse_string(content)
@@ -28,7 +28,7 @@ def draw_blockdiag(content, filename=None, font_path=None, output_fmt='png'):
         fontmap.set_default_font(font_path)
 
     draw = drawer.DiagramDraw(
-        output_fmt, diagram, filename=filename, antialias=True, fontmap=fontmap
+        output_fmt, diagram, filename=filename, font_alias=font_antialias, fontmap=fontmap
     )
     draw.draw()
 
