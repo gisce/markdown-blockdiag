@@ -6,6 +6,13 @@ from markdown.blockprocessors import BlockProcessor
 from markdown.util import etree
 from markdown_blockdiag.utils import draw_blockdiag, DIAG_MODULES
 
+# Python 3 version
+try:
+    from urllib.parse import quote as url_quote
+# Python 2 version
+except ImportError:
+    from urllib import quote as url_quote
+
 
 class BlockdiagProcessor(BlockProcessor):
 
@@ -44,7 +51,7 @@ class BlockdiagProcessor(BlockProcessor):
                 base64.b64encode(diagram).decode('ascii')
             )
         else:
-            src_data = 'data:image/svg+xml;utf8,{0}'.format(diagram)
+            src_data = 'data:image/svg+xml;charset=utf-8,{0}'.format(url_quote(diagram))
 
         p = etree.SubElement(parent, 'p')
         img = etree.SubElement(p, 'img')

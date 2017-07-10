@@ -9,6 +9,13 @@ from markdown import markdown
 from markdown_blockdiag.parser import BlockdiagProcessor
 from markdown_blockdiag.utils import draw_blockdiag
 
+# Python 3 version
+try:
+    from urllib.parse import quote as url_quote
+# Python 2 version
+except ImportError:
+    from urllib import quote as url_quote
+
 
 BASIC_DIAG_TXT = r"""
 blockdiag {
@@ -86,7 +93,7 @@ class BlockdiagTest(unittest.TestCase):
         self.maxDiff = None
         draw = draw_blockdiag(BASIC_DIAG_TXT, output_fmt='svg')
 
-        expected = '<p><img src="data:image/svg+xml;utf8,{0}" /></p>'.format(draw)
+        expected = '<p><img src="data:image/svg+xml;charset=utf-8,{0}" /></p>'.format(url_quote(draw))
         result = markdown(
             BASIC_DIAG_TXT,
             extensions=['markdown_blockdiag'],
