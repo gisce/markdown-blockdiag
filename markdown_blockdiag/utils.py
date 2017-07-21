@@ -4,6 +4,7 @@ from nwdiag import parser as nw_parser, builder as nw_builder, drawer as nw_draw
 from seqdiag import parser as seq_parser, builder as seq_builder, drawer as seq_drawer
 from actdiag import parser as act_parser, builder as act_builder, drawer as act_drawer
 from blockdiag import parser as block_parser, builder as block_builder, drawer as block_drawer
+from rackdiag import parser as rack_parser, builder as rack_builder, drawer as rack_drawer
 
 from blockdiag.utils.fontmap import FontMap
 
@@ -13,6 +14,7 @@ DIAG_MODULES = {
     'seqdiag'  : (seq_parser, seq_builder, seq_drawer),
     'actdiag'  : (act_parser, act_builder, act_drawer),
     'blockdiag': (block_parser, block_builder, block_drawer),
+    'rackdiag' : (rack_parser, rack_builder, rack_drawer),
 }
 
 
