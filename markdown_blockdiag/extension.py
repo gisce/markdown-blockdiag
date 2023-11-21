@@ -12,7 +12,7 @@ class BlockdiagExtension(Extension):
         }
         super(BlockdiagExtension, self).__init__(**kwargs)
 
-    def extendMarkdown(self, md, md_globals):
+    def extendMarkdown(self, md):
         md.parser.blockprocessors.add(
             'blockdiag', BlockdiagProcessor(md.parser, self), '>indent'
         )
