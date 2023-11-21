@@ -3,7 +3,7 @@ import re
 import base64
 
 from markdown.blockprocessors import BlockProcessor
-from markdown.util import etree
+import xml.etree.ElementTree as etree
 from markdown_blockdiag.utils import draw_blockdiag, DIAG_MODULES
 
 # Python 3 version
