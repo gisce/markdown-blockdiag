@@ -3,8 +3,8 @@ import re
 import base64
 
 from markdown.blockprocessors import BlockProcessor
-from markdown.util import etree
 from markdown_blockdiag.utils import draw_blockdiag, DIAG_MODULES
+from xml.etree import ElementTree
 
 # Python 3 version
 try:
@@ -53,6 +53,6 @@ class BlockdiagProcessor(BlockProcessor):
         else:
             src_data = 'data:image/svg+xml;charset=utf-8,{0}'.format(url_quote(diagram))
 
-        p = etree.SubElement(parent, 'p')
-        img = etree.SubElement(p, 'img')
+        p = ElementTree.SubElement(parent, 'p')
+        img = ElementTree.SubElement(p, 'img')
         img.attrib['src'] = src_data
