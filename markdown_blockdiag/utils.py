@@ -37,17 +37,24 @@ def draw_blockdiag(content, filename=None, font_path=None, font_antialias=True, 
     
     # Monkey-patch edge_label method to optionally disable edge label box
     if not edge_label_box:
-        original_edge_label = draw.edge_label
+        # Different diagram types have different edge_label implementations
+        # Only blockdiag uses the 'outline' parameter for edge label boxes
+        # seqdiag doesn't draw boxes around edge labels by default
         
-        def edge_label_no_box(edge):
-            if edge.label:
-                metrics = draw.metrics.edge(edge)
-                font = draw.metrics.font_for(edge)
-                # Call textarea without outline parameter to remove the box
-                draw.drawer.textarea(metrics.labelbox, edge.label, font=font,
-                                   fill=edge.textcolor)
-        
-        draw.edge_label = edge_label_no_box
+        if diag_type.strip() == 'blockdiag':
+            def edge_label_no_box(edge):
+                if edge.label:
+                    metrics = draw.metrics.edge(edge)
+                    font = draw.metrics.font_for(edge)
+                    # Call textarea without outline parameter to remove the box
+                    draw.drawer.textarea(metrics.labelbox, edge.label, font=font,
+                                       fill=edge.textcolor)
+            
+            draw.edge_label = edge_label_no_box
+        elif diag_type.strip() == 'seqdiag':
+            # seqdiag doesn't use outline parameter, no need to patch
+            pass
+        # actdiag and nwdiag inherit from blockdiag, but typically don't have edge labels
     
     draw.draw()
 
