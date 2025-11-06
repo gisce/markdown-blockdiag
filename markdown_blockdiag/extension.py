@@ -9,6 +9,7 @@ class BlockdiagExtension(Extension):
             'fontpath': ['', 'Font path to use'],
             'fontantialias': [True, 'Font antialiasing'],
             'format': ['png', 'Format to use (png/svg)'],
+            'fetch_remote_images': [True, 'Fetch remote images (requires network access)'],
         }
         super(BlockdiagExtension, self).__init__(**kwargs)
 
