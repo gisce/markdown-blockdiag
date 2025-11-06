@@ -1,5 +1,8 @@
 from __future__ import absolute_import, unicode_literals
 
+import re
+from tempfile import NamedTemporaryFile
+
 from nwdiag import parser as nw_parser, builder as nw_builder, drawer as nw_drawer
 from seqdiag import parser as seq_parser, builder as seq_builder, drawer as seq_drawer
 from actdiag import parser as act_parser, builder as act_builder, drawer as act_drawer
@@ -20,7 +23,105 @@ DIAG_MODULES = {
 }
 
 
-def draw_blockdiag(content, filename=None, font_path=None, font_antialias=True, output_fmt='png'):
+# Cache for pre-fetched remote images
+_image_cache = {}
+
+# Maximum file size for remote images (10 MB)
+MAX_IMAGE_SIZE = 10 * 1024 * 1024
+
+
+def clear_image_cache():
+    """
+    Clear the image cache and remove temporary files.
+    
+    This function clears the in-memory cache and attempts to remove
+    the temporary image files from disk. Useful for cleanup and testing.
+    """
+    import os
+    
+    # Try to remove temporary files
+    for url, filepath in list(_image_cache.items()):
+        try:
+            if os.path.exists(filepath):
+                os.remove(filepath)
+        except Exception:
+            # Ignore errors during cleanup
+            pass
+    
+    # Clear the cache dictionary
+    _image_cache.clear()
+
+
+def prefetch_remote_images(content):
+    """
+    Pre-fetch remote images referenced in diagram content and cache them locally.
+    
+    This function extracts URLs from background and icon attributes, downloads them,
+    and replaces them with local file paths. This ensures diagrams can be rendered
+    even in environments with restricted network access after the initial fetch.
+    
+    Args:
+        content: The diagram content string
+        
+    Returns:
+        Modified content with URLs replaced by local file paths
+    """
+    try:
+        from urllib.request import urlopen as orig_urlopen
+    except ImportError:
+        from urllib2 import urlopen as orig_urlopen
+    
+    import os
+    
+    # Pattern to match background = "url" or icon = "url"
+    url_pattern = re.compile(r'(background|icon)\s*=\s*"(https?://[^"]+)"')
+    
+    def replace_url(match):
+        attr_name = match.group(1)
+        url = match.group(2)
+        
+        # Check if already cached
+        if url in _image_cache:
+            return '{} = "{}"'.format(attr_name, _image_cache[url])
+        
+        # Try to fetch and cache the image
+        try:
+            # Get file extension from URL, default to .png if not found
+            ext = os.path.splitext(url)[1]
+            if not ext or not ext.startswith('.'):
+                ext = '.png'
+            
+            with NamedTemporaryFile(delete=False, suffix=ext) as tmpfile:
+                response = orig_urlopen(url, timeout=10)
+                
+                # Check Content-Length if available
+                content_length = response.headers.get('Content-Length')
+                if content_length and int(content_length) > MAX_IMAGE_SIZE:
+                    # Skip files that are too large
+                    return match.group(0)
+                
+                # Read with size limit to prevent memory issues
+                data = response.read(MAX_IMAGE_SIZE + 1)  # Read one extra byte to detect oversized files
+                if len(data) > MAX_IMAGE_SIZE:
+                    # File is too large, skip it
+                    return match.group(0)
+                
+                tmpfile.write(data)
+                tmpfile.flush()
+                _image_cache[url] = tmpfile.name
+                return '{} = "{}"'.format(attr_name, tmpfile.name)
+        except Exception:
+            # If fetch fails, keep the original URL and let blockdiag handle it
+            return match.group(0)
+    
+    return url_pattern.sub(replace_url, content)
+
+
+def draw_blockdiag(content, filename=None, font_path=None, font_antialias=True, output_fmt='png', fetch_remote_images=True):
+    # Pre-fetch remote images if enabled
+    if fetch_remote_images:
+        content = prefetch_remote_images(content)
+    
     diag_type, content = content.split(" ", 1)
     parser, builder, drawer = DIAG_MODULES[diag_type.strip()]
     tree = parser.parse_string(content)

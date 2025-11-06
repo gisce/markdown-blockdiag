@@ -45,7 +45,9 @@ class BlockdiagProcessor(BlockProcessor):
         font_path = self.extension.getConfig('fontpath')
         font_antialias = self.extension.getConfig('fontantialias')
         output_fmt = self.extension.getConfig('format')
-        diagram = draw_blockdiag(raw_block, output_fmt=output_fmt, font_path=font_path, font_antialias=font_antialias)
+        fetch_remote_images = self.extension.getConfig('fetch_remote_images')
+        diagram = draw_blockdiag(raw_block, output_fmt=output_fmt, font_path=font_path, 
+                                 font_antialias=font_antialias, fetch_remote_images=fetch_remote_images)
         if output_fmt == 'png':
             src_data = 'data:image/png;base64,{0}'.format(
                 base64.b64encode(diagram).decode('ascii')

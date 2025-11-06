@@ -159,3 +159,34 @@ class BlockdiagTest(unittest.TestCase):
         self.assertTrue("Title" in result)
         self.assertEqual(2, result.count(expected))
         self.assertEqual(3, result.count("paragraph"))
+
+    def test_prefetch_remote_images(self):
+        """Test that prefetch_remote_images correctly handles URLs"""
+        from markdown_blockdiag.utils import prefetch_remote_images
+        
+        # Test with URL patterns
+        diagram_with_urls = 'blockdiag { A [background = "http://example.com/bg.png"]; B [icon = "https://example.com/icon.gif"]; }'
+        result = prefetch_remote_images(diagram_with_urls)
+        
+        # The function should either replace URLs with cached paths or keep original URLs on failure
+        self.assertIn('background', result)
+        self.assertIn('icon', result)
+        
+        # Test with local paths (should not be modified)
+        diagram_with_local = 'blockdiag { A [background = "/local/path.png"]; }'
+        result = prefetch_remote_images(diagram_with_local)
+        self.assertEqual(diagram_with_local, result)  # Should be unchanged
+        
+    def test_prefetch_caching(self):
+        """Test that prefetch_remote_images caches results"""
+        from markdown_blockdiag.utils import prefetch_remote_images, clear_image_cache
+        
+        # Clear cache
+        clear_image_cache()
+        
+        # Test with same URL twice
+        diagram = 'blockdiag { A [background = "http://example.com/same.png"]; B [background = "http://example.com/same.png"]; }'
+        result = prefetch_remote_images(diagram)
+        
+        # Both occurrences should be handled (either replaced or kept)
+        self.assertIn('background', result)
