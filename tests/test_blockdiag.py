@@ -179,10 +179,10 @@ class BlockdiagTest(unittest.TestCase):
         
     def test_prefetch_caching(self):
         """Test that prefetch_remote_images caches results"""
-        from markdown_blockdiag.utils import prefetch_remote_images, _image_cache
+        from markdown_blockdiag.utils import prefetch_remote_images, clear_image_cache
         
         # Clear cache
-        _image_cache.clear()
+        clear_image_cache()
         
         # Test with same URL twice
         diagram = 'blockdiag { A [background = "http://example.com/same.png"]; B [background = "http://example.com/same.png"]; }'

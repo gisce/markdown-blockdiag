@@ -59,6 +59,8 @@ markdown_extensions:
 - **Local Files**: For offline builds, use local file paths instead of URLs
 - **Security**: Be cautious when allowing remote image fetching from untrusted sources
 - **Performance**: First render will be slower as images are downloaded; subsequent renders use cached images
+- **Temporary Files**: Downloaded images are cached in temporary files. These are automatically cleaned up by the operating system, but very large numbers of images may consume disk space until cleanup occurs
+- **File Size Limit**: Remote images are limited to 10 MB to prevent memory issues
 
 ## Troubleshooting
 

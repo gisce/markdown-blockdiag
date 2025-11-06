@@ -1,7 +1,6 @@
 from __future__ import absolute_import, unicode_literals
 
 import re
-import io
 from tempfile import NamedTemporaryFile
 
 from nwdiag import parser as nw_parser, builder as nw_builder, drawer as nw_drawer
@@ -27,6 +26,14 @@ DIAG_MODULES = {
 # Cache for pre-fetched remote images
 _image_cache = {}
 
+# Maximum file size for remote images (10 MB)
+MAX_IMAGE_SIZE = 10 * 1024 * 1024
+
+
+def clear_image_cache():
+    """Clear the image cache. Useful for testing and cleanup."""
+    _image_cache.clear()
+
 
 def prefetch_remote_images(content):
     """
@@ -47,6 +54,8 @@ def prefetch_remote_images(content):
     except ImportError:
         from urllib2 import urlopen as orig_urlopen
     
+    import os
+    
     # Pattern to match background = "url" or icon = "url"
     url_pattern = re.compile(r'(background|icon)\s*=\s*"(https?://[^"]+)"')
     
@@ -60,9 +69,17 @@ def prefetch_remote_images(content):
         
         # Try to fetch and cache the image
         try:
-            with NamedTemporaryFile(delete=False, suffix='.png') as tmpfile:
+            # Get file extension from URL
+            ext = os.path.splitext(url)[1] or '.png'
+            if not ext.startswith('.'):
+                ext = '.' + ext
+            
+            with NamedTemporaryFile(delete=False, suffix=ext) as tmpfile:
                 response = orig_urlopen(url, timeout=10)
-                tmpfile.write(response.read())
+                
+                # Read with size limit to prevent memory issues
+                data = response.read(MAX_IMAGE_SIZE)
+                tmpfile.write(data)
                 tmpfile.flush()
                 _image_cache[url] = tmpfile.name
                 return '{} = "{}"'.format(attr_name, tmpfile.name)
