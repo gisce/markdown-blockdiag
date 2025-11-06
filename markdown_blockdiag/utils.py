@@ -31,7 +31,24 @@ MAX_IMAGE_SIZE = 10 * 1024 * 1024
 
 
 def clear_image_cache():
-    """Clear the image cache. Useful for testing and cleanup."""
+    """
+    Clear the image cache and remove temporary files.
+    
+    This function clears the in-memory cache and attempts to remove
+    the temporary image files from disk. Useful for cleanup and testing.
+    """
+    import os
+    
+    # Try to remove temporary files
+    for url, filepath in list(_image_cache.items()):
+        try:
+            if os.path.exists(filepath):
+                os.remove(filepath)
+        except Exception:
+            # Ignore errors during cleanup
+            pass
+    
+    # Clear the cache dictionary
     _image_cache.clear()
 
 
@@ -69,16 +86,26 @@ def prefetch_remote_images(content):
         
         # Try to fetch and cache the image
         try:
-            # Get file extension from URL
-            ext = os.path.splitext(url)[1] or '.png'
-            if not ext.startswith('.'):
-                ext = '.' + ext
+            # Get file extension from URL, default to .png if not found
+            ext = os.path.splitext(url)[1]
+            if not ext or not ext.startswith('.'):
+                ext = '.png'
             
             with NamedTemporaryFile(delete=False, suffix=ext) as tmpfile:
                 response = orig_urlopen(url, timeout=10)
                 
+                # Check Content-Length if available
+                content_length = response.headers.get('Content-Length')
+                if content_length and int(content_length) > MAX_IMAGE_SIZE:
+                    # Skip files that are too large
+                    return match.group(0)
+                
                 # Read with size limit to prevent memory issues
-                data = response.read(MAX_IMAGE_SIZE)
+                data = response.read(MAX_IMAGE_SIZE + 1)  # Read one extra byte to detect oversized files
+                if len(data) > MAX_IMAGE_SIZE:
+                    # File is too large, skip it
+                    return match.group(0)
+                
                 tmpfile.write(data)
                 tmpfile.flush()
                 _image_cache[url] = tmpfile.name

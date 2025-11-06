@@ -59,8 +59,8 @@ markdown_extensions:
 - **Local Files**: For offline builds, use local file paths instead of URLs
 - **Security**: Be cautious when allowing remote image fetching from untrusted sources
 - **Performance**: First render will be slower as images are downloaded; subsequent renders use cached images
-- **Temporary Files**: Downloaded images are cached in temporary files. These are automatically cleaned up by the operating system, but very large numbers of images may consume disk space until cleanup occurs
-- **File Size Limit**: Remote images are limited to 10 MB to prevent memory issues
+- **Temporary Files**: Downloaded images are cached in temporary files. You can manually clean up using `clear_image_cache()` from `markdown_blockdiag.utils` if needed
+- **File Size Limit**: Remote images are limited to 10 MB to prevent memory issues. Larger images will be skipped.
 
 ## Troubleshooting
 
@@ -71,8 +71,9 @@ If background images or icons are not appearing:
 1. **Check network access**: Ensure your build environment can reach the remote URLs
 2. **Verify URLs**: Make sure the image URLs are accessible and return valid image files
 3. **Check format**: Supported formats include PNG, GIF, JPG
-4. **Try local files**: For testing, use local file paths to rule out network issues
-5. **Enable prefetching**: Ensure `fetch_remote_images: true` in your configuration
+4. **Check file size**: Images larger than 10 MB will be skipped
+5. **Try local files**: For testing, use local file paths to rule out network issues
+6. **Enable prefetching**: Ensure `fetch_remote_images: true` in your configuration
 
 ### Build Failures
 
@@ -81,3 +82,16 @@ If builds fail when using remote images:
 1. Set `fetch_remote_images: false` to disable prefetching
 2. Use local file paths instead of URLs
 3. Check firewall/proxy settings that might block image downloads
+
+### Cleaning Up Temporary Files
+
+If you need to manually clean up cached image files:
+
+```python
+from markdown_blockdiag.utils import clear_image_cache
+
+# Clear cache and remove temporary files
+clear_image_cache()
+```
+
+This is useful in long-running processes or when you want to ensure fresh downloads.
