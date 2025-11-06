@@ -159,3 +159,16 @@ class BlockdiagTest(unittest.TestCase):
         self.assertTrue("Title" in result)
         self.assertEqual(2, result.count(expected))
         self.assertEqual(3, result.count("paragraph"))
+
+    def test_edge_label_box_config(self):
+        """Test that edge_label_box configuration works"""
+        # Test that the configuration exists and has the correct default
+        from markdown_blockdiag.extension import BlockdiagExtension
+        
+        ext = BlockdiagExtension()
+        self.assertIn('edge_label_box', ext.config)
+        self.assertEqual(ext.config['edge_label_box'][0], True)
+        
+        # Test with edge_label_box=False
+        ext_no_box = BlockdiagExtension(edge_label_box=False)
+        self.assertEqual(ext_no_box.getConfig('edge_label_box'), False)

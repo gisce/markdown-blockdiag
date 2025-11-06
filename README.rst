@@ -48,3 +48,22 @@ In your mkdocs.yml add this to markdown_extensions.
   markdown_extensions:
     - markdown_blockdiag:
         format: svg
+
+Configuration Options
+---------------------
+
+The extension supports the following configuration options:
+
+* **format** (default: ``png``): Output format for diagrams. Can be ``png`` or ``svg``.
+* **fontpath** (default: ``''``): Path to font file to use for text rendering.
+* **fontantialias** (default: ``True``): Enable or disable font antialiasing.
+* **edge_label_box** (default: ``True``): Show or hide the box around edge labels. Set to ``False`` for cleaner diagrams without label boxes.
+
+Example with edge labels without boxes:
+
+.. code-block::
+
+  markdown_extensions:
+    - markdown_blockdiag:
+        format: svg
+        edge_label_box: False
